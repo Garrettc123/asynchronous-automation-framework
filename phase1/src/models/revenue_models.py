@@ -3,8 +3,7 @@ Database models for revenue tracking system
 """
 from datetime import datetime, timedelta
 from sqlalchemy import Column, Integer, String, Float, DateTime, Boolean, ForeignKey, Text, Enum as SQLEnum
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import declarative_base, relationship
 import enum
 
 Base = declarative_base()
