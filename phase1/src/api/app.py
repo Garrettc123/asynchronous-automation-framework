@@ -55,7 +55,8 @@ def index():
 
 @app.route('/health')
 def health():
-    return jsonify({'status': 'healthy', 'timestamp': os.getenv('API_PORT', '5000')})
+    from datetime import datetime
+    return jsonify({'status': 'healthy', 'timestamp': datetime.utcnow().isoformat()})
 
 if __name__ == '__main__':
     port = int(os.getenv('API_PORT', 5000))
