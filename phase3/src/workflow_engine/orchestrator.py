@@ -167,7 +167,11 @@ class WorkflowExecutor:
         }
 
     async def _execute_task(self, task: TaskNode, prior_results: Dict[str, TaskResult]) -> TaskResult:
-        """Execute a single task with semaphore limiting concurrency."""
+        """Execute a single task with semaphore limiting concurrency.
+
+        Note: task.timeout applies to the handler execution only, not semaphore
+        wait time. Under heavy load, tasks may queue waiting for the semaphore.
+        """
         result = TaskResult(task_id=task.task_id, status=TaskStatus.RUNNING)
         async with self._semaphore:
             try:
