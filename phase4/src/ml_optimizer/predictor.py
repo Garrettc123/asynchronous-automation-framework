@@ -25,10 +25,18 @@ class OptimizationResult:
 class ResourceOptimizer:
     """Linear-regression-based resource optimizer that learns from feedback."""
 
-    def __init__(self):
+    def __init__(
+        self,
+        feedback_window: int = 5,
+        learning_rate: float = 0.01,
+        min_complexity_weight: float = 0.1,
+    ):
         self.model_weights = {"cpu": 0.5, "mem": 0.3, "complexity": 2.5, "data_size": 0.1}
         self._feedback_history: List[Dict[str, Any]] = []
         self._prediction_count = 0
+        self._feedback_window = feedback_window
+        self._learning_rate = learning_rate
+        self._min_complexity_weight = min_complexity_weight
 
     def predict_duration(self, task_features: Dict[str, Any]) -> float:
         """Predict task execution duration using learned weights."""
@@ -70,12 +78,15 @@ class ResourceOptimizer:
             "error": error,
             "timestamp": time.time(),
         })
-        # Simple online learning: adjust complexity weight
-        if len(self._feedback_history) > 5:
-            recent = self._feedback_history[-5:]
+        # Simple online learning: adjust complexity weight using configurable parameters
+        if len(self._feedback_history) > self._feedback_window:
+            recent = self._feedback_history[-self._feedback_window:]
             avg_error = sum(f["error"] for f in recent) / len(recent)
-            adjustment = avg_error * 0.01
-            self.model_weights["complexity"] = max(0.1, self.model_weights["complexity"] + adjustment)
+            adjustment = avg_error * self._learning_rate
+            self.model_weights["complexity"] = max(
+                self._min_complexity_weight,
+                self.model_weights["complexity"] + adjustment,
+            )
 
     def get_stats(self) -> Dict[str, Any]:
         """Return optimizer statistics."""

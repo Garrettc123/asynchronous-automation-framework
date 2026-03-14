@@ -169,6 +169,11 @@ class WorkflowExecutor:
     async def _execute_task(self, task: TaskNode, prior_results: Dict[str, TaskResult]) -> TaskResult:
         """Execute a single task with semaphore limiting concurrency.
 
+        Args:
+            task: The task node to execute.
+            prior_results: Results from previously completed tasks, available
+                           for handlers that need upstream outputs (e.g. fan-in joins).
+
         Note: task.timeout applies to the handler execution only, not semaphore
         wait time. Under heavy load, tasks may queue waiting for the semaphore.
         """

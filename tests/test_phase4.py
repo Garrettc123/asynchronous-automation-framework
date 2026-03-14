@@ -34,7 +34,7 @@ def test_event_dataclass():
 def test_event_bus_subscribe():
     """Test subscribing to event types."""
     bus = EventBus()
-    handler = lambda e: None
+    handler = lambda event: None
     bus.subscribe("test.event", handler)
     assert "test.event" in bus._subscribers
     assert handler in bus._subscribers["test.event"]
@@ -43,7 +43,7 @@ def test_event_bus_subscribe():
 def test_event_bus_unsubscribe():
     """Test unsubscribing from event types."""
     bus = EventBus()
-    handler = lambda e: None
+    handler = lambda event: None
     bus.subscribe("test.event", handler)
     bus.unsubscribe("test.event", handler)
     assert handler not in bus._subscribers.get("test.event", [])

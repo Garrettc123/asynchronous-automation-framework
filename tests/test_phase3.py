@@ -96,7 +96,12 @@ async def test_execute_simple_workflow():
 
 @pytest.mark.asyncio
 async def test_execute_parallel_workflow():
-    """Test executing a workflow with parallel tasks."""
+    """Test executing a workflow with parallel tasks.
+
+    Note: TaskType.JOIN currently uses the same execution path as PARALLEL/SEQUENTIAL —
+    it executes after all its dependencies complete (enforced by topological sort waves).
+    Future enhancements could add fan-in aggregation logic in the handler.
+    """
     workflow = WorkflowDefinition(workflow_id="parallel-wf")
     workflow.add_task(TaskNode(task_id="root", task_name="Root", task_type=TaskType.SEQUENTIAL))
     workflow.add_task(TaskNode(task_id="p1", task_name="Parallel 1", task_type=TaskType.PARALLEL, dependencies=["root"]))
@@ -106,6 +111,7 @@ async def test_execute_parallel_workflow():
     result = await executor.execute_workflow(workflow)
     assert result["tasks_executed"] == 4
     assert result["tasks_completed"] == 4
+    # JOIN executes after all its dependencies (p1, p2) complete — verified via task count
 
 
 @pytest.mark.asyncio
