@@ -58,6 +58,34 @@ def health():
     from datetime import datetime
     return jsonify({'status': 'healthy', 'timestamp': datetime.utcnow().isoformat()})
 
+@app.route('/api/status')
+def unified_status():
+    """Unified framework status endpoint showing all 4 phases."""
+    from datetime import datetime
+    return jsonify({
+        'framework': 'Asynchronous Automation Framework',
+        'version': '4.1.0',
+        'timestamp': datetime.utcnow().isoformat(),
+        'phases': {
+            'phase1_revenue_agent': {
+                'status': 'operational',
+                'endpoints': ['/api/payments', '/api/affiliates', '/api/content', '/api/marketplace', '/api/dashboard']
+            },
+            'phase2_auto_recovery': {
+                'status': 'operational',
+                'description': 'Automatic failure detection and recovery'
+            },
+            'phase3_dag_workflows': {
+                'status': 'operational',
+                'description': 'DAG-based workflow orchestration with topological execution'
+            },
+            'phase4_event_ml': {
+                'status': 'operational',
+                'description': 'Event-driven pub/sub bus with ML resource optimization'
+            }
+        }
+    })
+
 if __name__ == '__main__':
     port = int(os.getenv('API_PORT', 5000))
     debug = os.getenv('API_DEBUG', 'True') == 'True'
